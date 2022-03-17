@@ -167,7 +167,7 @@ export const expectedEnvelopeFormatterResultsWithPolicy = expectedEnvelopeFormat
     return {
       ...result,
       policy: `# Snyk (https://snyk.io) policy file, patches or ignores known vulnerabilities.
-version: v1.22.2
+version: v1.23.0
 # ignores vulnerabilities until expiry date; change duration by modifying expiry date
 ignore:
   SNYK-CC-TF-4:
