@@ -3,7 +3,6 @@ import {
   FailedToParseTerraformFileError,
   tryParsingTerraformFile,
 } from './parsers/terraform-file-parser';
-import { NoFilesToScanError } from './file-loader';
 import {
   isTerraformPlan,
   tryParsingTerraformPlan,
@@ -18,6 +17,7 @@ import {
   IaCTestFlags,
   ParsingResults,
   TerraformPlanScanMode,
+  VALID_TERRAFORM_FILE_TYPES,
 } from './types';
 import * as analytics from '../../../../lib/analytics';
 import { CustomError } from '../../../../lib/errors';
@@ -32,10 +32,26 @@ const debug = Debug('snyk-test');
 export async function parseFiles(
   filesData: IacFileData[],
   options: IaCTestFlags = {},
+  isTFVarSupportEnabled = false,
 ): Promise<ParsingResults> {
-  const parsedFiles: IacFileParsed[] = [];
-  const failedFiles: IacFileParseFailure[] = [];
-  for (const fileData of filesData) {
+  let moduleFilesData: IacFileData[] = [];
+  let nonModuleFilesData: IacFileData[] = [];
+
+  if (!isTFVarSupportEnabled) {
+    nonModuleFilesData = filesData;
+  } else {
+    moduleFilesData = filesData.filter((fileData) =>
+      VALID_TERRAFORM_FILE_TYPES.includes(fileData.fileType),
+    );
+    nonModuleFilesData = filesData.filter(
+      (fileData) => !VALID_TERRAFORM_FILE_TYPES.includes(fileData.fileType),
+    );
+  }
+
+  let parsedFiles: IacFileParsed[] = [];
+  let failedFiles: IacFileParseFailure[] = [];
+
+  for (const fileData of nonModuleFilesData) {
     try {
       parsedFiles.push(...tryParseIacFile(fileData, options));
     } catch (err) {
@@ -46,8 +62,13 @@ export async function parseFiles(
     }
   }
 
-  if (parsedFiles.length === 0) {
-    throw new NoFilesToScanError();
+  if (moduleFilesData.length > 0) {
+    const {
+      parsedFiles: parsedTfFiles,
+      failedFiles: failedTfFiles,
+    } = parseTerraformFiles(moduleFilesData);
+    parsedFiles = parsedFiles.concat(parsedTfFiles);
+    failedFiles = failedFiles.concat(failedTfFiles);
   }
 
   return {

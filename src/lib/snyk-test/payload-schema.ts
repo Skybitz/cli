@@ -9,7 +9,7 @@ interface Scan {
 
 export interface IacFile {
   fileContent: string;
-  fileType: 'yaml' | 'yml' | 'json' | 'tf';
+  fileType: 'yaml' | 'yml' | 'json' | 'tf' | 'tfvars';
 }
 
 export interface IacScan extends Scan {

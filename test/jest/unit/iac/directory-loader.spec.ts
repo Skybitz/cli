@@ -1,13 +1,11 @@
 const mockFs = require('mock-fs');
 import {
-  getTerraformFilesInDirectoryGenerator,
+  getFilesForDirectoryGenerator,
   getAllDirectoriesForPath,
   getFilesForDirectory,
-  loadAndParseTerraformFiles,
-} from '../../../../src/cli/commands/test/iac-local-execution/handle-terraform-files';
-import * as terraformFileHandler from '../../../../src/cli/commands/test/iac-local-execution/handle-terraform-files';
+} from '../../../../src/cli/commands/test/iac-local-execution/directory-loader';
+import * as directoryLoader from '../../../../src/cli/commands/test/iac-local-execution/directory-loader';
 import * as path from 'path';
-import { NoFilesToScanError } from '../../../../src/cli/commands/test/iac-local-execution/file-loader';
 import {
   terraformFileStub,
   level1Directory,
@@ -48,7 +46,7 @@ describe('getAllDirectoriesForPath', () => {
   });
 
   describe('errors', () => {
-    it('throws an error if a single file scan and the file is not IaC', async () => {
+    it('returns an empty array if single file scan and the file is not IaC', async () => {
       mockFs({ [nonIacFileStub.filePath]: 'content' });
 
       expect(getAllDirectoriesForPath(nonIacFileStub.filePath)).toEqual([
@@ -57,14 +55,11 @@ describe('getAllDirectoriesForPath', () => {
       expect(
         getFilesForDirectory(nonIacFileStub.filePath, nonIacFileStub.filePath),
       ).toEqual([]);
-      await expect(
-        loadAndParseTerraformFiles(nonIacFileStub.filePath),
-      ).rejects.toThrow(NoFilesToScanError);
     });
 
     it('throws an error when an error occurs when loading files', () => {
       jest
-        .spyOn(terraformFileHandler, 'getAllDirectoriesForPath')
+        .spyOn(directoryLoader, 'getAllDirectoriesForPath')
         .mockImplementation(() => {
           throw new Error('error occurred during fs operations');
         });
@@ -180,11 +175,12 @@ describe('getAllDirectoriesForPath', () => {
         },
       });
 
-      const filePaths = [...getTerraformFilesInDirectoryGenerator('dir')];
+      const filePaths = [...getFilesForDirectoryGenerator('dir')];
       expect(filePaths).toEqual([
         'dir/file.auto.tfvars',
         'dir/file.tfvars',
         'dir/file1.tf',
+        'dir/file2.yaml',
       ]);
     });
 
@@ -200,7 +196,7 @@ describe('getAllDirectoriesForPath', () => {
         },
       });
 
-      const filePaths = [...getTerraformFilesInDirectoryGenerator('dir')];
+      const filePaths = [...getFilesForDirectoryGenerator('dir')];
       expect(filePaths).toEqual(['dir/file.tfvars', 'dir/file1.tf']);
     });
   });

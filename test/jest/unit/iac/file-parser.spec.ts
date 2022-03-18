@@ -3,7 +3,6 @@ import {
   parseFiles,
   parseTerraformFiles,
 } from '../../../../src/cli/commands/test/iac-local-execution/file-parser';
-import { NoFilesToScanError } from '../../../../src/cli/commands/test/iac-local-execution/file-loader';
 import {
   FailedToParseTerraformFileError,
   tryParsingTerraformFile,
@@ -126,12 +125,6 @@ describe('parseFiles', () => {
     ]);
     expect(parsedFiles.length).toEqual(1);
     expect(failedFiles.length).toEqual(0);
-  });
-
-  it('throws an error when no recognised config types are found', async () => {
-    await expect(parseFiles([unrecognisedYamlDataStub])).rejects.toThrow(
-      NoFilesToScanError,
-    );
   });
 
   // the npm yaml parser by default fails on SemanticErrors like duplicate keys

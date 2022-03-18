@@ -27,8 +27,8 @@ export enum ValidFileType {
   YML = 'yml',
   TFVARS = 'tfvars',
 }
-export const VALID_FILE_TYPES = Object.values(ValidFileType);
-export const VALID_TERRAFORM_FILE_TYPES: string[] = ['.tf', '.tfvars'];
+export const VALID_FILE_TYPES: string[] = Object.values(ValidFileType);
+export const VALID_TERRAFORM_FILE_TYPES: string[] = ['tf', 'tfvars'];
 
 export interface IacFileParsed extends IacFileData {
   jsonContent: Record<string, unknown> | TerraformScanInput;
