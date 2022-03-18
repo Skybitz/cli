@@ -5,10 +5,13 @@ import { IacShareResultsFormat } from '../../cli/commands/test/iac-local-executi
 import { convertIacResultToScanResult } from './envelope-formatters';
 import { AuthFailedError } from '../errors/authentication-failed-error';
 import { Policy } from '../policy/find-and-load-policy';
+import { ProjectAttributes, Tag } from '../types';
 
 export async function shareResults(
   results: IacShareResultsFormat[],
   policy: Policy | undefined,
+  tags?: Tag[],
+  attributes?: ProjectAttributes,
 ): Promise<Record<string, string>> {
   const scanResults = results.map((result) =>
     convertIacResultToScanResult(result, policy),
@@ -21,7 +24,7 @@ export async function shareResults(
     headers: {
       authorization: getAuthHeader(),
     },
-    body: scanResults,
+    body: { scanResults, tags, attributes },
   });
 
   if (res.statusCode === 401) {
