@@ -1,21 +1,19 @@
-# snyk iac gen-driftignore -- generate ignore rules based on scan result
+# snyk iac update-exclude-policy -- generate ignore rules based on scan result
 
 ## Usage
 
-`snyk iac gen-driftignore [<OPTIONS>]`
+`snyk iac update-exclude-policy [<OPTIONS>]`
 
 ## Description
 
-The `snyk iac gen-driftignore` can generate driftignore rules to be used by `snyk iac scan`.
-
-For more information see the [driftctl documentation](https://docs.driftctl.com/).
+The `snyk iac update-exclude-policy` can generate exclude policy rules to be used by `snyk iac scan`.
 
 ## Exit codes
 
 Possible exit codes and their meaning:
 
-**0**: success, driftignore generated successfully
-**1**: error, something wrong happened during ignore file generation
+**0**: success, exclude rules generated successfully
+**1**: error, something wrong happened during exclude rules generation
 
 ## Configure the Snyk CLI
 
@@ -27,14 +25,6 @@ See [Configure the Snyk CLI](https://docs.snyk.io/features/snyk-cli/configure-th
 Use the `-d` option to output the debug logs.
 
 ## Options
-
-### `--input`
-
-Input where the JSON should be parsed from. Defaults to stdin.
-
-### `--output`
-
-Output file path to write the driftignore to. (default ".driftignore")
 
 ### `--exclude-changed`
 
@@ -52,5 +42,5 @@ Exclude resources not managed by IaC
 
 ```
 $ snyk iac scan --output=json://output.json
-$ snyk iac gen-driftignore --input=output.json --output=/dev/stdout
+$ cat output.json | snyk iac update-exclude-policy
 ```
