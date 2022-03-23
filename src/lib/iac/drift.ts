@@ -53,7 +53,7 @@ export const DescribeRequiredArgs = [
 
 // ⚠ Keep in mind to also update driftctl version used to generate docker images
 // You can edit base image used for snyk final image here https://github.com/snyk/snyk-images/blob/master/alpine
-export const driftctlVersion = 'v0.23.0';
+export const driftctlVersion = 'v0.25.0';
 
 const driftctlChecksums = {
   'driftctl_windows_386.exe':
@@ -78,7 +78,7 @@ const driftctlChecksums = {
     'bf7310277eeccc2679b529c1f1d2ced30e877949a6d7c5606eb2d4c2ec033b66',
 };
 
-const dctlBaseUrl = 'https://github.com/snyk/driftctl/releases/download/';
+const dctlBaseUrl = 'https://static.snyk.io/cli/driftctl/';
 const driftctlPath = path.join(cachePath, 'driftctl_' + driftctlVersion);
 const driftctlDefaultOptions = ['--no-version-check'];
 let isBinaryDownloaded = false;
